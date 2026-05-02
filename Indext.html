@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kousalya Dairy | Fresh & Pure Dairy Products</title>
+  <meta name="description" content="Kousalya Dairy delivers fresh cow milk, curd, ghee and paneer directly from village farms to your home." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:#176b2c;
+      --green-dark:#0f4f20;
+      --green-soft:#eaf7ec;
+      --gold:#f5b942;
+      --text:#172217;
+      --muted:#637064;
+      --white:#ffffff;
+      --bg:#f8fbf7;
+      --shadow:0 18px 45px rgba(18, 77, 34, 0.14);
+      --radius:24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: auto;
+    }
+
+    .top-bar {
+      background: var(--green-dark);
+      color: white;
+      font-size: 14px;
+      padding: 9px 0;
+    }
+    .top-bar .container {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+    }
+    .nav {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      color: var(--green);
+    }
+    .brand-mark {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff, #dff3df);
+      border: 3px solid var(--green);
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+    }
+    .brand-title span {
+      display: block;
+      font-family: Pacifico, cursive;
+      font-size: 28px;
+      line-height: 1;
+    }
+    .brand-title small {
+      letter-spacing: 4px;
+      color: #2b2b2b;
+      font-size: 11px;
+    }
+    .menu {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .menu a:hover { color: var(--green); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-weight: 900;
+      transition: .25s ease;
+      font-size: 15px;
+    }
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      box-shadow: 0 12px 26px rgba(23,107,44,.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(23,107,44,.32); }
+    .btn-outline {
+      background: white;
+      color: var(--green);
+      border: 2px solid var(--green);
+    }
+    .btn-outline:hover { background: var(--green-soft); transform: translateY(-2px); }
+
+    .hero {
+      position: relative;
+      min-height: 690px;
+      padding: 84px 0 130px;
+      background:
+        linear-gradient(90deg, rgba(248,251,247,.98) 0%, rgba(248,251,247,.82) 44%, rgba(248,251,247,.1) 100%),
+        url('https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?auto=format&fit=crop&w=1600&q=80') center right/cover;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: -5%; right: -5%; bottom: -70px;
+      height: 170px;
+      background: white;
+      border-radius: 50% 50% 0 0;
+      transform: rotate(-1deg);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 620px;
+    }
+    .badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 17px;
+      border-radius: 999px;
+      color: var(--green);
+      background: white;
+      box-shadow: var(--shadow);
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: clamp(48px, 8vw, 92px);
+      line-height: .9;
+      margin: 0 0 20px;
+      color: var(--green);
+      letter-spacing: -3px;
+      text-transform: uppercase;
+    }
+    .hero h2 {
+      font-family: Pacifico, cursive;
+      font-weight: 400;
+      font-size: clamp(24px, 3vw, 34px);
+      margin: 0 0 18px;
+    }
+    .hero p {
+      color: #243124;
+      font-size: 18px;
+      line-height: 1.8;
+      max-width: 540px;
+      margin-bottom: 26px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .trust-strip {
+      position: relative;
+      z-index: 4;
+      margin-top: -88px;
+    }
+    .trust-grid {
+      background: rgba(255,255,255,.95);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      overflow: hidden;
+      border: 1px solid rgba(23,107,44,.1);
+    }
+    .trust-card {
+      padding: 30px 22px;
+      text-align: center;
+      border-right: 1px solid #d7e5d8;
+    }
+    .trust-card:last-child { border-right: 0; }
+    .icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, #69b34c, var(--green));
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      box-shadow: 0 10px 20px rgba(23,107,44,.2);
+    }
+    .trust-card h3 { margin: 0 0 8px; color: var(--green); }
+    .trust-card p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+    section { padding: 84px 0; }
+    .section-title { text-align: center; margin-bottom: 42px; }
+    .section-title small { color: var(--green); font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+    .section-title h2 { font-size: clamp(32px, 4vw, 48px); margin: 10px 0 10px; color: var(--green); }
+    .section-title p { color: var(--muted); margin: 0; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .product-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 12px 35px rgba(0,0,0,.08);
+      overflow: hidden;
+      transition: .25s ease;
+      border: 1px solid rgba(23,107,44,.08);
+    }
+    .product-card:hover { transform: translateY(-7px); box-shadow: var(--shadow); }
+    .product-img {
+      height: 190px;
+      background-size: cover;
+      background-position: center;
+    }
+    .product-body { padding: 22px; text-align: center; }
+    .product-body h3 { color: var(--green); font-size: 23px; margin: 0 0 9px; }
+    .product-body p { color: var(--muted); line-height: 1.55; min-height: 50px; }
+    .price { font-size: 22px; font-weight: 900; color: var(--green-dark); margin: 14px 0 18px; }
+
+    .about-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 42px;
+      align-items: center;
+    }
+    .about-image {
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      min-height: 450px;
+      background: url('https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=900&q=80') center/cover;
+    }
+    .about-text h2 { color: var(--green); font-size: 44px; margin: 0 0 18px; }
+    .about-text p { color: var(--muted); line-height: 1.8; font-size: 17px; }
+    .checks { display: grid; gap: 13px; margin: 24px 0; }
+    .checks div { display: flex; align-items: center; gap: 12px; font-weight: 800; }
+    .checks span { color: white; background: var(--green); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+
+    .order {
+      background: linear-gradient(135deg, var(--green-soft), white);
+    }
+    .order-box {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 34px;
+      align-items: start;
+    }
+    .order-panel, .contact-panel {
+      background: white;
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(23,107,44,.08);
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: grid; gap: 8px; margin-bottom: 16px; }
+    label { font-weight: 900; color: var(--green-dark); font-size: 14px; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #d8e4d8;
+      border-radius: 16px;
+      padding: 14px 15px;
+      font: inherit;
+      outline: none;
+      background: #fbfdfb;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 4px rgba(23,107,44,.08); }
+    textarea { min-height: 105px; resize: vertical; }
+    .full { grid-column: 1 / -1; }
+    .summary {
+      background: var(--green-dark);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+    }
+    .summary h3 { margin-top: 0; font-size: 28px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.18); gap: 20px; }
+    .summary-row strong { text-align: right; }
+    .note { font-size: 13px; opacity: .85; line-height: 1.5; margin-top: 14px; }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr .8fr;
+      gap: 18px;
+    }
+    .gallery-item {
+      min-height: 230px;
+      border-radius: 26px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    .gallery-item:first-child { grid-row: span 2; }
+
+    .contact-section {
+      background: var(--green-dark);
+      color: white;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 22px;
+    }
+    .contact-card {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 24px;
+      padding: 28px;
+    }
+    .contact-card h3 { margin-top: 0; }
+    .contact-card p { opacity: .9; line-height: 1.7; }
+
+    footer {
+      background: #083313;
+      color: white;
+      padding: 24px 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .mobile-menu { display: none; }
+
+    @media (max-width: 980px) {
+      .menu { display: none; }
+      .mobile-menu { display: inline-flex; }
+      .trust-grid, .products-grid, .contact-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-wrap, .order-box { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .hero { min-height: auto; }
+    }
+
+    @media (max-width: 640px) {
+      .nav { height: auto; padding: 14px 0; }
+      .brand-title span { font-size: 22px; }
+      .brand-mark { width: 48px; height: 48px; }
+      .hero { padding: 58px 0 120px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .trust-grid, .products-grid, .contact-grid, .gallery-grid, .form-grid { grid-template-columns: 1fr; }
+      .trust-card { border-right: 0; border-bottom: 1px solid #d7e5d8; }
+      .trust-card:last-child { border-bottom: 0; }
+      .order-panel, .contact-panel { padding: 24px; }
+      h1 { letter-spacing: -1px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="container">
+      <span>🚚 Daily home delivery available</span>
+      <span>📍 Fresh from village farms | Call: +91 12345 67890</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="container nav">
+      <a href="#home" class="brand">
+        <div class="brand-mark">🐄</div>
+        <div class="brand-title">
+          <span>Kousalya</span>
+          <small>DAIRY</small>
+        </div>
+      </a>
+      <nav class="menu">
+        <a href="#home">HOME</a>
+        <a href="#about">ABOUT US</a>
+        <a href="#products">PRODUCTS</a>
+        <a href="#order">ORDER ONLINE</a>
+        <a href="#gallery">GALLERY</a>
+        <a href="#contact">CONTACT</a>
+      </nav>
+      <a class="btn btn-primary" href="tel:+911234567890">📞 Call Now</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-content">
+        <div class="badge">🌿 Fresh & Pure</div>
+        <h1>Kousalya<br>Dairy</h1>
+        <h2>Gaon se seedha, bilkul fresh aur shudh doodh</h2>
+        <p>Hum aapke ghar tak 100% shudh, fresh aur natural dairy products pahunchate hain. Har subah farm fresh milk, curd, ghee aur paneer ke saath sehat ka vaada.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#order">🛒 Order Online</a>
+          <a class="btn btn-outline" href="https://wa.me/911234567890?text=Hi%20Kousalya%20Dairy%2C%20I%20want%20to%20order%20fresh%20dairy%20products" target="_blank">💬 WhatsApp Us</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust-strip">
+      <div class="container trust-grid">
+        <div class="trust-card"><div class="icon">🌿</div><h3>100% Pure</h3><p>Bina milawat, bilkul shudh dairy products.</p></div>
+        <div class="trust-card"><div class="icon">🐄</div><h3>Healthy Cows</h3><p>Natural khurak aur achhi dekhbhal.</p></div>
+        <div class="trust-card"><div class="icon">🚚</div><h3>Daily Delivery</h3><p>Rozana fresh doodh aapke ghar tak.</p></div>
+        <div class="trust-card"><div class="icon">🛡️</div><h3>Hygienic Process</h3><p>Saaf-suthri aur surakshit packaging.</p></div>
+      </div>
+    </div>
+
+    <section id="products">
+      <div class="container">
+        <div class="section-title">
+          <small>Our Products</small>
+          <h2>Fresh, Pure & Tasty</h2>
+          <p>Choose your daily dairy essentials.</p>
+        </div>
+        <div class="products-grid">
+          <div class="product-card">
+            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=700&q=80')"></div>
+            <div class="product-body"><h3>Milk</h3><p>Fresh cow milk, daily supply.</p><div class="price">₹60 / Litre</div><a href="#order" class="btn btn-primary">Order Now</a></div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1571212515416-fef01fc43637?auto=format&fit=crop&w=700&q=80')"></div>
+            <div class="product-body"><h3>Curd</h3><p>Ghar jaisa gaadha aur fresh dahi.</p><div class="price">₹80 / Kg</div><a href="#order" class="btn btn-primary">Order Now</a></div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=700&q=80')"></div>
+            <div class="product-body"><h3>Ghee</h3><p>Paramparik tarike se bana desi ghee.</p><div class="price">₹750 / Kg</div><a href="#order" class="btn btn-primary">Order Now</a></div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=700&q=80')"></div>
+            <div class="product-body"><h3>Paneer</h3><p>Soft, fresh and protein-rich paneer.</p><div class="price">₹380 / Kg</div><a href="#order" class="btn btn-primary">Order Now</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container about-wrap">
+        <div class="about-image"></div>
+        <div class="about-text">
+          <div class="badge">About Us</div>
+          <h2>Village Freshness, Delivered Daily</h2>
+          <p>Kousalya Dairy ek gaon-based dairy initiative hai. Hum apni gaayon ko natural khurak dete hain aur unka doodh saaf-suthre tarike se nikal kar aap tak pahunchate hain.</p>
+          <p>Hamari pehchaan hai — Shudhata, Vishwas aur Seva.</p>
+          <div class="checks">
+            <div><span>✓</span> Fresh from village farms</div>
+            <div><span>✓</span> No chemicals or preservatives</div>
+            <div><span>✓</span> Trusted by local families</div>
+          </div>
+          <a class="btn btn-primary" href="#contact">Contact Us</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="order" id="order">
+      <div class="container">
+        <div class="section-title">
+          <small>Online Ordering</small>
+          <h2>Place Your Order on WhatsApp</h2>
+          <p>Select product, quantity and delivery details. Your order will open directly on WhatsApp.</p>
+        </div>
+        <div class="order-box">
+          <form class="order-panel" onsubmit="sendOrder(event)">
+            <div class="form-grid">
+              <div class="field">
+                <label>Your Name</label>
+                <input id="name" placeholder="Enter your name" required />
+              </div>
+              <div class="field">
+                <label>Mobile Number</label>
+                <input id="phone" placeholder="Enter mobile number" required />
+              </div>
+              <div class="field">
+                <label>Product</label>
+                <select id="product" onchange="calculateTotal()">
+                  <option value="Milk" data-price="60">Milk - ₹60/L</option>
+                  <option value="Curd" data-price="80">Curd - ₹80/Kg</option>
+                  <option value="Ghee" data-price="750">Ghee - ₹750/Kg</option>
+                  <option value="Paneer" data-price="380">Paneer - ₹380/Kg</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Quantity</label>
+                <input id="qty" type="number" min="1" value="1" oninput="calculateTotal()" required />
+              </div>
+              <div class="field">
+                <label>Delivery Type</label>
+                <select id="delivery">
+                  <option>One-time order</option>
+                  <option>Daily subscription</option>
+                  <option>Weekly subscription</option>
+                  <option>Monthly subscription</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Preferred Delivery Time</label>
+                <select id="time">
+                  <option>Morning 6 AM - 8 AM</option>
+                  <option>Morning 8 AM - 10 AM</option>
+                  <option>Evening 5 PM - 7 PM</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label>Delivery Address</label>
+                <textarea id="address" placeholder="House no, street, area, city" required></textarea>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">💬 Send Order on WhatsApp</button>
+          </form>
+
+          <div class="summary">
+            <h3>Order Summary</h3>
+            <div class="summary-row"><span>Product</span><strong id="sProduct">Milk</strong></div>
+            <div class="summary-row"><span>Quantity</span><strong id="sQty">1</strong></div>
+            <div class="summary-row"><span>Estimated Total</span><strong id="sTotal">₹60</strong></div>
+            <p class="note">Final price may vary based on delivery location, subscription plan and availability. Please replace the WhatsApp number in code with your actual business number.</p>
+            <br>
+            <a class="btn btn-outline" href="tel:+911234567890">📞 Need Help? Call Now</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="container">
+        <div class="section-title">
+          <small>Gallery</small>
+          <h2>From Our Farm</h2>
+          <p>A glimpse of freshness, care and purity.</p>
+        </div>
+        <div class="gallery-grid">
+          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1596733430284-f7437764b1a9?auto=format&fit=crop&w=900&q=80')"></div>
+          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80')"></div>
+          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1600788907416-456578634209?auto=format&fit=crop&w=900&q=80')"></div>
+          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=900&q=80')"></div>
+          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=900&q=80')"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+      <div class="container">
+        <div class="section-title">
+          <small style="color:#9ee6a7">Contact Us</small>
+          <h2 style="color:white">Start Fresh Dairy Delivery Today</h2>
+          <p style="color:#dcebdd">Call or WhatsApp us for daily milk delivery and subscriptions.</p>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-card"><h3>📞 Phone</h3><p>+91 12345 67890<br>+91 98765 43210</p></div>
+          <div class="contact-card"><h3>📍 Address</h3><p>Your Village, Your City,<br>Your State - 123456</p></div>
+          <div class="contact-card"><h3>💬 WhatsApp</h3><p>Order milk, curd, ghee and paneer directly on WhatsApp.</p><a class="btn btn-outline" href="https://wa.me/911234567890" target="_blank">Order on WhatsApp</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© 2026 Kousalya Dairy. All Rights Reserved. Gaon se seedha, bilkul fresh aur shudh doodh 💚</div>
+  </footer>
+
+  <script>
+    const businessWhatsAppNumber = "911234567890"; // Replace with your real WhatsApp number, example: 919876543210
+
+    function calculateTotal() {
+      const product = document.getElementById('product');
+      const selected = product.options[product.selectedIndex];
+      const price = Number(selected.dataset.price);
+      const qty = Number(document.getElementById('qty').value || 1);
+      const total = price * qty;
+
+      document.getElementById('sProduct').innerText = selected.value;
+      document.getElementById('sQty').innerText = qty;
+      document.getElementById('sTotal').innerText = '₹' + total;
+    }
+
+    function sendOrder(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const product = document.getElementById('product');
+      const selected = product.options[product.selectedIndex];
+      const productName = selected.value;
+      const price = Number(selected.dataset.price);
+      const qty = Number(document.getElementById('qty').value || 1);
+      const total = price * qty;
+      const delivery = document.getElementById('delivery').value;
+      const time = document.getElementById('time').value;
+      const address = document.getElementById('address').value;
+
+      const message = `Hi Kousalya Dairy,%0A%0AI want to place an order:%0A%0AName: ${name}%0AMobile: ${phone}%0AProduct: ${productName}%0AQuantity: ${qty}%0ADelivery Type: ${delivery}%0APreferred Time: ${time}%0AAddress: ${address}%0AEstimated Total: ₹${total}%0A%0APlease confirm availability and delivery.`;
+
+      window.open(`https://wa.me/${businessWhatsAppNumber}?text=${message}`, '_blank');
+    }
+
+    calculateTotal();
+  </script>
+</body>
+</html>
