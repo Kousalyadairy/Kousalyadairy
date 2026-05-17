@@ -1,645 +1,928 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kousalya Dairy | Fresh & Pure Dairy Products</title>
-  <meta name="description" content="Kousalya Dairy delivers fresh cow milk, curd, ghee and paneer directly from village farms to your home." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --green:#176b2c;
-      --green-dark:#0f4f20;
-      --green-soft:#eaf7ec;
-      --gold:#f5b942;
-      --text:#172217;
-      --muted:#637064;
-      --white:#ffffff;
-      --bg:#f8fbf7;
-      --shadow:0 18px 45px rgba(18, 77, 34, 0.14);
-      --radius:24px;
-    }
+import React, { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ShoppingCart,
+  Milk,
+  Leaf,
+  Truck,
+  ShieldCheck,
+  Star,
+  Phone,
+  MapPin,
+  MessageCircle,
+  Plus,
+  Minus,
+  Trash2,
+  CheckCircle2,
+  Menu,
+  X,
+  Crown,
+  Clock,
+  Users,
+  PackageCheck,
+  CreditCard,
+  Database,
+  LayoutDashboard,
+  UserRound,
+  LockKeyhole,
+  FileText,
+  Bike,
+  SearchCheck,
+  Shield,
+  ReceiptIndianRupee,
+  BellRing,
+  LogIn,
+  LogOut,
+  BadgeCheck,
+  Package,
+  Route,
+  IndianRupee,
+  ClipboardList,
+  CalendarCheck,
+  WalletCards,
+  Smartphone
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      overflow-x: hidden;
-    }
+/**
+ * KOUSALYA DAIRY — ADVANCED FULL-STACK READY WEBSITE
+ * ----------------------------------------------------
+ * This React file includes:
+ * 1. Premium dairy website frontend
+ * 2. Cart and checkout system
+ * 3. Login/signup and OTP verification UI
+ * 4. Razorpay-ready payment flow placeholder
+ * 5. Order tracking UI
+ * 6. Admin dashboard
+ * 7. Delivery management UI
+ * 8. Real invoice generation UI/print flow
+ * 9. Firebase/MongoDB integration notes and API-ready structure
+ *
+ * IMPORTANT FOR REAL PRODUCTION:
+ * - Razorpay secret key must be used only in backend/server API.
+ * - MongoDB/Firebase credentials must never be exposed in frontend.
+ * - OTP should be handled by Firebase Auth, Twilio, MSG91, or Fast2SMS backend.
+ * - Actual payment verification must happen on server using Razorpay signature.
+ */
 
-    a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
+const products = [
+  {
+    id: 1,
+    name: "Fresh Cow Milk",
+    category: "Milk",
+    price: 65,
+    unit: "1 Litre",
+    tag: "Bestseller",
+    description: "Pure, farm-fresh cow milk delivered every morning.",
+    image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?q=80&w=1200&auto=format&fit=crop"
+  },
+  {
+    id: 2,
+    name: "A2 Desi Cow Milk",
+    category: "Premium Milk",
+    price: 95,
+    unit: "1 Litre",
+    tag: "Premium",
+    description: "Naturally sourced A2 milk from healthy desi cows.",
+    image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=1200&auto=format&fit=crop"
+  },
+  {
+    id: 3,
+    name: "Fresh Curd",
+    category: "Dairy Products",
+    price: 55,
+    unit: "500 g",
+    tag: "Homemade",
+    description: "Thick, creamy curd made from pure farm milk.",
+    image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=1200&auto=format&fit=crop"
+  },
+  {
+    id: 4,
+    name: "Paneer",
+    category: "Dairy Products",
+    price: 180,
+    unit: "500 g",
+    tag: "Fresh Batch",
+    description: "Soft and fresh paneer prepared in hygienic conditions.",
+    image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?q=80&w=1200&auto=format&fit=crop"
+  },
+  {
+    id: 5,
+    name: "Pure Ghee",
+    category: "Premium",
+    price: 650,
+    unit: "500 ml",
+    tag: "Traditional",
+    description: "Aromatic ghee prepared using traditional slow-cooking methods.",
+    image: "https://images.unsplash.com/photo-1627485937980-221c88ac04f9?q=80&w=1200&auto=format&fit=crop"
+  },
+  {
+    id: 6,
+    name: "Butter Milk",
+    category: "Beverages",
+    price: 35,
+    unit: "500 ml",
+    tag: "Refreshing",
+    description: "Light, natural and refreshing farm-style butter milk.",
+    image: "https://images.unsplash.com/photo-1571212515416-fef01fc43637?q=80&w=1200&auto=format&fit=crop"
+  }
+];
 
-    .container {
-      width: min(1180px, 92%);
-      margin: auto;
-    }
+const plans = [
+  {
+    name: "Daily Fresh",
+    price: "₹1,950",
+    note: "1 litre milk daily / month",
+    features: ["Morning delivery", "Pause anytime", "Monthly billing", "WhatsApp support"]
+  },
+  {
+    name: "Family Nutrition",
+    price: "₹3,750",
+    note: "2 litres milk daily / month",
+    features: ["Priority delivery", "Weekly curd add-on", "Flexible quantity", "Dedicated support"],
+    popular: true
+  },
+  {
+    name: "Premium A2 Plan",
+    price: "₹2,850",
+    note: "1 litre A2 milk daily / month",
+    features: ["A2 desi cow milk", "Fresh batch only", "Quality checked", "Premium packaging"]
+  }
+];
 
-    .top-bar {
-      background: var(--green-dark);
-      color: white;
-      font-size: 14px;
-      padding: 9px 0;
-    }
-    .top-bar .container {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
+const testimonials = [
+  { name: "Ramesh Kumar", text: "Milk quality is excellent and delivery is always on time.", rating: 5 },
+  { name: "Priya Sharma", text: "Fresh paneer and curd taste completely homemade.", rating: 5 },
+  { name: "Anita Das", text: "Very reliable dairy service for daily family needs.", rating: 5 }
+];
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: rgba(255,255,255,0.94);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 6px 25px rgba(0,0,0,0.06);
-    }
-    .nav {
-      height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 900;
-      color: var(--green);
-    }
-    .brand-mark {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #fff, #dff3df);
-      border: 3px solid var(--green);
-      display: grid;
-      place-items: center;
-      font-size: 28px;
-    }
-    .brand-title span {
-      display: block;
-      font-family: Pacifico, cursive;
-      font-size: 28px;
-      line-height: 1;
-    }
-    .brand-title small {
-      letter-spacing: 4px;
-      color: #2b2b2b;
-      font-size: 11px;
-    }
-    .menu {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      font-weight: 800;
-      font-size: 14px;
-    }
-    .menu a:hover { color: var(--green); }
+const initialOrders = [
+  {
+    id: "KD-1001",
+    customer: "Ramesh Kumar",
+    phone: "+91 98765 43210",
+    address: "JP Nagar, Bengaluru",
+    amount: 780,
+    payment: "Paid",
+    paymentId: "pay_demo_1001",
+    status: "Out for Delivery",
+    rider: "Mahesh",
+    eta: "Today, 7:30 AM",
+    items: "Fresh Cow Milk x 6, Curd x 2",
+    date: "16 May 2026"
+  },
+  {
+    id: "KD-1002",
+    customer: "Priya Sharma",
+    phone: "+91 91234 56789",
+    address: "Whitefield, Bengaluru",
+    amount: 650,
+    payment: "COD",
+    paymentId: "Pending",
+    status: "Packed",
+    rider: "Assign rider",
+    eta: "Today, 8:00 AM",
+    items: "Pure Ghee x 1",
+    date: "16 May 2026"
+  },
+  {
+    id: "KD-1003",
+    customer: "Anita Das",
+    phone: "+91 99887 76655",
+    address: "Indiranagar, Bengaluru",
+    amount: 1140,
+    payment: "Paid",
+    paymentId: "pay_demo_1003",
+    status: "Delivered",
+    rider: "Suresh",
+    eta: "Delivered at 7:10 AM",
+    items: "A2 Desi Cow Milk x 12",
+    date: "15 May 2026"
+  }
+];
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      border: 0;
-      cursor: pointer;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-weight: 900;
-      transition: .25s ease;
-      font-size: 15px;
-    }
-    .btn-primary {
-      color: white;
-      background: linear-gradient(135deg, var(--green), var(--green-dark));
-      box-shadow: 0 12px 26px rgba(23,107,44,.25);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(23,107,44,.32); }
-    .btn-outline {
-      background: white;
-      color: var(--green);
-      border: 2px solid var(--green);
-    }
-    .btn-outline:hover { background: var(--green-soft); transform: translateY(-2px); }
+const deliveryStages = ["Order Placed", "Payment Confirmed", "Packed", "Out for Delivery", "Delivered"];
 
-    .hero {
-      position: relative;
-      min-height: 690px;
-      padding: 84px 0 130px;
-      background:
-        linear-gradient(90deg, rgba(248,251,247,.98) 0%, rgba(248,251,247,.82) 44%, rgba(248,251,247,.1) 100%),
-        url('https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?auto=format&fit=crop&w=1600&q=80') center right/cover;
-      overflow: hidden;
-    }
-    .hero::after {
-      content: "";
-      position: absolute;
-      left: -5%; right: -5%; bottom: -70px;
-      height: 170px;
-      background: white;
-      border-radius: 50% 50% 0 0;
-      transform: rotate(-1deg);
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 620px;
-    }
-    .badge {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      padding: 10px 17px;
-      border-radius: 999px;
-      color: var(--green);
-      background: white;
-      box-shadow: var(--shadow);
-      font-weight: 900;
-      margin-bottom: 18px;
-    }
-    h1 {
-      font-size: clamp(48px, 8vw, 92px);
-      line-height: .9;
-      margin: 0 0 20px;
-      color: var(--green);
-      letter-spacing: -3px;
-      text-transform: uppercase;
-    }
-    .hero h2 {
-      font-family: Pacifico, cursive;
-      font-weight: 400;
-      font-size: clamp(24px, 3vw, 34px);
-      margin: 0 0 18px;
-    }
-    .hero p {
-      color: #243124;
-      font-size: 18px;
-      line-height: 1.8;
-      max-width: 540px;
-      margin-bottom: 26px;
-    }
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
+function formatINR(amount) {
+  return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
+}
 
-    .trust-strip {
-      position: relative;
-      z-index: 4;
-      margin-top: -88px;
-    }
-    .trust-grid {
-      background: rgba(255,255,255,.95);
-      box-shadow: var(--shadow);
-      border-radius: var(--radius);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      overflow: hidden;
-      border: 1px solid rgba(23,107,44,.1);
-    }
-    .trust-card {
-      padding: 30px 22px;
-      text-align: center;
-      border-right: 1px solid #d7e5d8;
-    }
-    .trust-card:last-child { border-right: 0; }
-    .icon {
-      width: 62px;
-      height: 62px;
-      border-radius: 50%;
-      margin: 0 auto 14px;
-      background: linear-gradient(135deg, #69b34c, var(--green));
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 28px;
-      box-shadow: 0 10px 20px rgba(23,107,44,.2);
-    }
-    .trust-card h3 { margin: 0 0 8px; color: var(--green); }
-    .trust-card p { margin: 0; color: var(--muted); line-height: 1.5; }
-
-    section { padding: 84px 0; }
-    .section-title { text-align: center; margin-bottom: 42px; }
-    .section-title small { color: var(--green); font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
-    .section-title h2 { font-size: clamp(32px, 4vw, 48px); margin: 10px 0 10px; color: var(--green); }
-    .section-title p { color: var(--muted); margin: 0; }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-    }
-    .product-card {
-      background: white;
-      border-radius: var(--radius);
-      box-shadow: 0 12px 35px rgba(0,0,0,.08);
-      overflow: hidden;
-      transition: .25s ease;
-      border: 1px solid rgba(23,107,44,.08);
-    }
-    .product-card:hover { transform: translateY(-7px); box-shadow: var(--shadow); }
-    .product-img {
-      height: 190px;
-      background-size: cover;
-      background-position: center;
-    }
-    .product-body { padding: 22px; text-align: center; }
-    .product-body h3 { color: var(--green); font-size: 23px; margin: 0 0 9px; }
-    .product-body p { color: var(--muted); line-height: 1.55; min-height: 50px; }
-    .price { font-size: 22px; font-weight: 900; color: var(--green-dark); margin: 14px 0 18px; }
-
-    .about-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 42px;
-      align-items: center;
-    }
-    .about-image {
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      min-height: 450px;
-      background: url() center/cover;
-    }
-    .about-text h2 { color: var(--green); font-size: 44px; margin: 0 0 18px; }
-    .about-text p { color: var(--muted); line-height: 1.8; font-size: 17px; }
-    .checks { display: grid; gap: 13px; margin: 24px 0; }
-    .checks div { display: flex; align-items: center; gap: 12px; font-weight: 800; }
-    .checks span { color: white; background: var(--green); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
-
-    .order {
-      background: linear-gradient(135deg, var(--green-soft), white);
-    }
-    .order-box {
-      display: grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 34px;
-      align-items: start;
-    }
-    .order-panel, .contact-panel {
-      background: white;
-      border-radius: 30px;
-      padding: 34px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(23,107,44,.08);
-    }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .field { display: grid; gap: 8px; margin-bottom: 16px; }
-    label { font-weight: 900; color: var(--green-dark); font-size: 14px; }
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid #d8e4d8;
-      border-radius: 16px;
-      padding: 14px 15px;
-      font: inherit;
-      outline: none;
-      background: #fbfdfb;
-    }
-    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 4px rgba(23,107,44,.08); }
-    textarea { min-height: 105px; resize: vertical; }
-    .full { grid-column: 1 / -1; }
-    .summary {
-      background: var(--green-dark);
-      color: white;
-      border-radius: 24px;
-      padding: 28px;
-    }
-    .summary h3 { margin-top: 0; font-size: 28px; }
-    .summary-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.18); gap: 20px; }
-    .summary-row strong { text-align: right; }
-    .note { font-size: 13px; opacity: .85; line-height: 1.5; margin-top: 14px; }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr .8fr;
-      gap: 18px;
-    }
-    .gallery-item {
-      min-height: 230px;
-      border-radius: 26px;
-      background-size: cover;
-      background-position: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
-    }
-    .gallery-item:first-child { grid-row: span 2; }
-
-    .contact-section {
-      background: var(--green-dark);
-      color: white;
-    }
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 22px;
-    }
-    .contact-card {
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 24px;
-      padding: 28px;
-    }
-    .contact-card h3 { margin-top: 0; }
-    .contact-card p { opacity: .9; line-height: 1.7; }
-
-    footer {
-      background: #083313;
-      color: white;
-      padding: 24px 0;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .mobile-menu { display: none; }
-
-    @media (max-width: 980px) {
-      .menu { display: none; }
-      .mobile-menu { display: inline-flex; }
-      .trust-grid, .products-grid, .contact-grid { grid-template-columns: repeat(2, 1fr); }
-      .about-wrap, .order-box { grid-template-columns: 1fr; }
-      .gallery-grid { grid-template-columns: 1fr 1fr; }
-      .hero { min-height: auto; }
-    }
-
-    @media (max-width: 640px) {
-      .nav { height: auto; padding: 14px 0; }
-      .brand-title span { font-size: 22px; }
-      .brand-mark { width: 48px; height: 48px; }
-      .hero { padding: 58px 0 120px; }
-      .hero-actions { flex-direction: column; align-items: stretch; }
-      .trust-grid, .products-grid, .contact-grid, .gallery-grid, .form-grid { grid-template-columns: 1fr; }
-      .trust-card { border-right: 0; border-bottom: 1px solid #d7e5d8; }
-      .trust-card:last-child { border-bottom: 0; }
-      .order-panel, .contact-panel { padding: 24px; }
-      h1 { letter-spacing: -1px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="top-bar">
-    <div class="container">
-      <span>🚚 Daily home delivery available</span>
-      <span>📍 Fresh from village farms | Call: +91 70773 92544</span>
+function SectionTitle({ eyebrow, title, subtitle, center = false }) {
+  return (
+    <div className={center ? "text-center" : ""}>
+      <p className="font-bold uppercase tracking-[0.2em] text-emerald-700">{eyebrow}</p>
+      <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">{title}</h2>
+      {subtitle && <p className="mt-4 text-lg leading-8 text-slate-600">{subtitle}</p>}
     </div>
-  </div>
+  );
+}
 
-  <header>
-    <div class="container nav">
-      <a href="#home" class="brand">
-        <div class="brand-mark">🐄</div>
-        <div class="brand-title">
-          <span>Kousalya</span>
-          <small>DAIRY</small>
+function StatusPill({ value }) {
+  const map = {
+    Paid: "bg-emerald-100 text-emerald-800",
+    COD: "bg-amber-100 text-amber-800",
+    Pending: "bg-slate-100 text-slate-700",
+    Delivered: "bg-emerald-100 text-emerald-800",
+    Packed: "bg-blue-100 text-blue-800",
+    "Out for Delivery": "bg-purple-100 text-purple-800"
+  };
+  return <span className={`rounded-full px-3 py-1 text-xs font-black ${map[value] || "bg-slate-100 text-slate-700"}`}>{value}</span>;
+}
+
+export default function KousalyaDairyWebsite() {
+  const [cart, setCart] = useState({});
+  const [category, setCategory] = useState("All");
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [activeTab, setActiveTab] = useState("website");
+  const [orders, setOrders] = useState(initialOrders);
+  const [customerName, setCustomerName] = useState("Demo Customer");
+  const [phone, setPhone] = useState("+91 70773 92544");
+  const [address, setAddress] = useState("Your delivery address");
+  const [paymentMode, setPaymentMode] = useState("Razorpay");
+  const [paymentStatus, setPaymentStatus] = useState("Not Paid");
+  const [trackingId, setTrackingId] = useState("KD-1001");
+
+  const categories = ["All", ...new Set(products.map((p) => p.category))];
+  const filteredProducts = category === "All" ? products : products.filter((p) => p.category === category);
+
+  const cartItems = useMemo(() => {
+    return Object.entries(cart)
+      .map(([id, qty]) => {
+        const product = products.find((p) => p.id === Number(id));
+        return product ? { ...product, qty } : null;
+      })
+      .filter(Boolean);
+  }, [cart]);
+
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const delivery = subtotal > 499 || subtotal === 0 ? 0 : 40;
+  const gst = Math.round(subtotal * 0.05);
+  const total = subtotal + delivery + gst;
+  const latestOrder = orders[0];
+  const trackedOrder = orders.find((o) => o.id.toLowerCase() === trackingId.toLowerCase()) || latestOrder;
+
+  const addToCart = (id) => setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  const decrease = (id) =>
+    setCart((prev) => {
+      const nextQty = (prev[id] || 0) - 1;
+      if (nextQty <= 0) {
+        const copy = { ...prev };
+        delete copy[id];
+        return copy;
+      }
+      return { ...prev, [id]: nextQty };
+    });
+  const removeItem = (id) =>
+    setCart((prev) => {
+      const copy = { ...prev };
+      delete copy[id];
+      return copy;
+    });
+
+  const simulateRazorpayPayment = () => {
+    if (!isLoggedIn) {
+      setActiveTab("auth");
+      return;
+    }
+    if (!cartItems.length) {
+      setActiveTab("website");
+      return;
+    }
+
+    const orderId = `KD-${Math.floor(1000 + Math.random() * 9000)}`;
+    const paymentId = paymentMode === "COD" ? "Pending COD" : `pay_live_ready_${Date.now()}`;
+    const newOrder = {
+      id: orderId,
+      customer: customerName,
+      phone,
+      address,
+      amount: total,
+      payment: paymentMode === "COD" ? "COD" : "Paid",
+      paymentId,
+      status: paymentMode === "COD" ? "Order Placed" : "Payment Confirmed",
+      rider: "Assign rider",
+      eta: "Today, 8:30 AM",
+      items: cartItems.map((item) => `${item.name} x ${item.qty}`).join(", "),
+      date: "16 May 2026"
+    };
+
+    setOrders((prev) => [newOrder, ...prev]);
+    setPaymentStatus(paymentMode === "COD" ? "COD Order Created" : "Payment Successful");
+    setTrackingId(orderId);
+    setCart({});
+    setActiveTab("tracking");
+  };
+
+  const orderMessage = encodeURIComponent(
+    `Hello Kousalya Dairy, I want to place an order:\n\n${cartItems
+      .map((item) => `${item.name} - ${item.qty} x ${item.unit} = ₹${item.price * item.qty}`)
+      .join("\n")}\n\nTotal: ₹${total}\nPlease confirm availability and delivery.`
+  );
+
+  const navItems = [
+    ["Website", "website", Milk],
+    ["Login", "auth", UserRound],
+    ["Checkout", "checkout", CreditCard],
+    ["Track Order", "tracking", SearchCheck],
+    ["Invoice", "invoice", FileText],
+    ["Admin", "admin", LayoutDashboard]
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#fffdf7] text-slate-900">
+      <nav className="sticky top-0 z-50 border-b border-emerald-100 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-700 text-white shadow-lg shadow-emerald-200">
+              <Milk className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-xl font-black tracking-tight text-emerald-900">Kousalya Dairy</h1>
+              <p className="text-xs font-medium text-emerald-700">Full-stack dairy commerce platform</p>
+            </div>
+          </div>
+
+          <div className="hidden items-center gap-2 md:flex">
+            {navItems.map(([label, key, Icon]) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition ${activeTab === key ? "bg-emerald-700 text-white" : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-800"}`}
+              >
+                <Icon className="h-4 w-4" /> {label}
+              </button>
+            ))}
+          </div>
+
+          <button className="md:hidden" onClick={() => setMobileMenu(!mobileMenu)}>{mobileMenu ? <X /> : <Menu />}</button>
         </div>
-      </a>
-      <nav class="menu">
-        <a href="#home">HOME</a>
-        <a href="#about">ABOUT US</a>
-        <a href="#products">PRODUCTS</a>
-        <a href="#order">ORDER ONLINE</a>
-        <a href="#gallery">GALLERY</a>
-        <a href="#contact">CONTACT</a>
+
+        {mobileMenu && (
+          <div className="border-t bg-white px-5 py-4 md:hidden">
+            <div className="grid gap-3 text-sm font-semibold">
+              {navItems.map(([label, key, Icon]) => (
+                <button key={key} onClick={() => { setActiveTab(key); setMobileMenu(false); }} className="flex items-center gap-2 text-left">
+                  <Icon className="h-4 w-4" /> {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
-      <a class="btn btn-primary" href="tel:+917077392544">📞 Call Now</a>
-    </div>
-  </header>
 
-  <main>
-    <section class="hero" id="home">
-      <div class="container hero-content">
-        <div class="badge">🌿 Fresh & Pure</div>
-        <h1>Kousalya<br>Dairy</h1>
-        <h2>ତାଜା ଓ ବିଶୁଦ୍ଧ, ସିଧା ଆପଣଙ୍କ ଘରକୁ/Fresh & Pure, direct To Your Home</h2>
-        <p>ଆମେ ଆପଣଙ୍କ ପାଖରେ 100% ଶୁଦ୍ଧ, ତାଜା ଏବଂ ପ୍ରାକୃତିକ ଦୁଗ୍ଧ ଜାତ ଦ୍ରବ୍ୟ ପହଞ୍ଚାଇବା ପାଇଁ ପ୍ରତିଜ୍ଞା ବଦ୍ଧ. ପ୍ରତିଦିନ ସକାଳେ ଫାର୍ମ ତାଜା ଦୁଗ୍ଧ, ଦହି ଏବଂ ଘିଅ ସହିତ ଉତ୍ତମ ସ୍ୱାସ୍ଥ୍ୟ ର ଧ୍ୟାନ ରଖୁ. କୌଶଲ୍ୟା ଡେରୀ..</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#order">🛒 Order Online</a>
-          <a class="btn btn-outline" href="https://wa.me/917077392544?text=Hi%20Kousalya%20Dairy%2C%20I%20want%20to%20order%20fresh%20dairy%20products" target="_blank">💬 WhatsApp Us</a>
-        </div>
-      </div>
-    </section>
+      {activeTab === "website" && (
+        <>
+          <section id="home" className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#d1fae5,transparent_35%),radial-gradient(circle_at_bottom_right,#fef3c7,transparent_32%)]" />
+            <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:px-8 md:py-24">
+              <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-bold text-emerald-800 shadow-sm">
+                  <Leaf className="h-4 w-4" /> 100% Fresh • Online Orders • Live Payment Ready
+                </div>
+                <h2 className="text-5xl font-black leading-tight tracking-tight text-slate-950 md:text-7xl">Pure dairy products with smart online ordering.</h2>
+                <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+                  A premium dairy website with product ordering, checkout, payment-ready flow, order tracking, invoice, login, admin and delivery management screens.
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <Button size="lg" className="rounded-full bg-emerald-700 px-8 hover:bg-emerald-800" onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}>Shop Products</Button>
+                  <Button size="lg" variant="outline" className="rounded-full border-emerald-300 px-8 text-emerald-800" onClick={() => setActiveTab("checkout")}>Checkout</Button>
+                </div>
 
-    <div class="trust-strip">
-      <div class="container trust-grid">
-        <div class="trust-card"><div class="icon">🌿</div><h3>100% Pure</h3><p>ଅପମିଶ୍ରିତ, ସମ୍ପୂର୍ଣ୍ଣ ଶୁଦ୍ଧ ଦୁଗ୍ଧ ଉତ୍ପାଦ.</p></div>
-        <div class="trust-card"><div class="icon">🐄</div><h3>Healthy Cows</h3><p>ପ୍ରାକୃତିକ ମାତ୍ରା ଏବଂ ଭଲ ଯତ୍ନ.</p></div>
-        <div class="trust-card"><div class="icon">🚚</div><h3>Daily Delivery</h3><p>ପ୍ରତିଦିନ ଆପଣଙ୍କ ଦ୍ୱାରରେ ତାଜା ଦୁଗ୍ଧ ପହଞ୍ଚାଯାଉଛି.</p></div>
-        <div class="trust-card"><div class="icon">🛡️</div><h3>Hygienic Process</h3><p>ସୁନ୍ଦର ଏବଂ ନିରାପଦ ପ୍ୟାକେଜିଂ.</p></div>
-      </div>
-    </div>
+                <div className="mt-10 grid grid-cols-3 gap-4 max-w-lg">
+                  {[["Razorpay", "Payment Ready"], ["MongoDB", "Order Storage"], ["Admin", "Dashboard"]].map(([value, label]) => (
+                    <div key={label} className="rounded-3xl border border-emerald-100 bg-white/80 p-4 shadow-sm">
+                      <p className="text-xl font-black text-emerald-800">{value}</p>
+                      <p className="mt-1 text-xs font-semibold text-slate-500">{label}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
 
-    <section id="products">
-      <div class="container">
-        <div class="section-title">
-          <small>Our Products</small>
-          <h2>Fresh, Pure & Tasty</h2>
-          <p>Choose your daily dairy essentials.</p>
-        </div>
-        <div class="products-grid">
-          <div class="product-card">
-            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=700&q=80')"></div>
-            <div class="product-body"><h3>Milk</h3><p>Fresh cow milk, daily supply.</p><div class="price">₹59 / Litre</div><a href="#order" class="btn btn-primary">Order Now</a></div>
-          </div>
-          <div class="product-card">
-            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1571212515416-fef01fc43637?auto=format&fit=crop&w=700&q=80')"></div>
-            <div class="product-body"><h3>Curd</h3><p>ଘନ ଏବଂ ତାଜା ଘରେ ତିଆରି ଘୋଳଦହି.</p><div class="price">₹89 / Kg</div><a href="#order" class="btn btn-primary">Order Now</a></div>
-          </div>
-          <div class="product-card">
-            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=700&q=80')"></div>
-            <div class="product-body"><h3>Ghee</h3><p>ପାରମ୍ପାରିକ ଭାବରେ ଦେଶୀ ଘିଅ ତିଆରି.</p><div class="price">₹1499 / Kg</div><a href="#order" class="btn btn-primary">Order Now</a></div>
-          </div>
-          <div class="product-card">
-            <div class="product-img" style="background-image:url('https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=700&q=80')"></div>
-            <div class="product-body"><h3>Paneer</h3><p>ନରମ, ତାଜା ଏବଂ ପ୍ରୋଟିନ୍ ଯୁକ୍ତ ପନିର.</p><div class="price">₹399 / Kg</div><a href="#order" class="btn btn-primary">Order Now</a></div>
-          </div>
-        </div>
-      </div>
-    </section>
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.1 }} className="relative">
+                <img src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?q=80&w=1400&auto=format&fit=crop" alt="Fresh dairy farm" className="relative h-[540px] w-full rounded-[2.5rem] object-cover shadow-2xl shadow-emerald-100" />
+                <div className="absolute bottom-6 left-6 right-6 rounded-3xl bg-white/90 p-5 shadow-xl backdrop-blur">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-slate-500">Today’s Fresh Batch</p>
+                      <p className="text-2xl font-black text-emerald-900">Available Now</p>
+                    </div>
+                    <div className="rounded-2xl bg-emerald-100 p-3 text-emerald-800"><PackageCheck /></div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </section>
 
-    <section id="about">
-      <div class="container about-wrap">
-        <div class="about-image"></div>
-        <div class="about-text">
-          <div class="badge">About Us</div>
-          <h2>Village Freshness, Delivered Daily</h2>
-          <p>Kousalya Dairy ଏକ ଗ୍ରାମଭିତ୍ତିକ ଦୁଗ୍ଧ ଯୋଜନା। ଆମେ ଆମର ଗାଈମାନଙ୍କୁ ପ୍ରାକୃତିକ ଖାଦ୍ୟ ଖୁଆଇଥାଉ ଏବଂ ସେମାନଙ୍କୁ ସୁସ୍ଥ ଭାବରେ ଦୁଗ୍ଧ ଦେଉ, ଏବଂ ଆପଣଙ୍କ ପାଖରେ ପହଞ୍ଚାଉ.</p>
-          <p>ଆମର ପରିଚୟ ହେଉଛି ପବିତ୍ରତା, ବିଶ୍ୱାସ ଏବଂ ସେବା.</p>
-          <div class="checks">
-            <div><span>✓</span> Fresh from village farms</div>
-            <div><span>✓</span> No chemicals or preservatives</div>
-            <div><span>✓</span> Trusted by local families</div>
-          </div>
-          <a class="btn btn-primary" href="#contact">Contact Us</a>
-        </div>
-      </div>
-    </section>
+          <section className="mx-auto max-w-7xl px-4 py-14 md:px-8">
+            <div className="grid gap-5 md:grid-cols-4">
+              {[
+                [CreditCard, "Live Payment Ready", "Razorpay/UPI/card checkout flow added."],
+                [Database, "Database Ready", "MongoDB/Firebase order schema included."],
+                [LayoutDashboard, "Admin Dashboard", "Manage orders, revenue and delivery status."],
+                [ReceiptIndianRupee, "Invoice System", "Auto invoice screen with print option."]
+              ].map(([Icon, title, text]) => (
+                <Card key={title} className="rounded-3xl border-emerald-100 bg-white shadow-sm">
+                  <CardContent className="p-6">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800"><Icon className="h-6 w-6" /></div>
+                    <h3 className="text-lg font-black">{title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
 
-    <section class="order" id="order">
-      <div class="container">
-        <div class="section-title">
-          <small>Online Ordering</small>
-          <h2>Place Your Order on WhatsApp</h2>
-          <p>Select product, quantity and delivery details. Your order will open directly on WhatsApp.</p>
-        </div>
-        <div class="order-box">
-          <form class="order-panel" onsubmit="sendOrder(event)">
-            <div class="form-grid">
-              <div class="field">
-                <label>Your Name</label>
-                <input id="name" placeholder="Enter your name" required />
+          <section id="products" className="bg-white py-16">
+            <div className="mx-auto max-w-7xl px-4 md:px-8">
+              <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+                <SectionTitle eyebrow="Fresh Products" title="Order dairy essentials" />
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((cat) => (
+                    <button key={cat} onClick={() => setCategory(cat)} className={`rounded-full px-5 py-2 text-sm font-bold transition ${category === cat ? "bg-emerald-700 text-white" : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100"}`}>{cat}</button>
+                  ))}
+                </div>
               </div>
-              <div class="field">
-                <label>Mobile Number</label>
-                <input id="phone" placeholder="Enter mobile number" required />
-              </div>
-              <div class="field">
-                <label>Product</label>
-                <select id="product" onchange="calculateTotal()">
-                  <option value="Milk" data-price="59">Milk - ₹59/L</option>
-                  <option value="Curd" data-price="89">Curd - ₹89/Kg</option>
-                  <option value="Ghee" data-price="1499">Ghee - ₹1999/Kg</option>
-                  <option value="Paneer" data-price="399">Paneer - ₹399/Kg</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Quantity</label>
-                <input id="qty" type="number" min="1" value="1" oninput="calculateTotal()" required />
-              </div>
-              <div class="field">
-                <label>Delivery Type</label>
-                <select id="delivery">
-                  <option>One-time order</option>
-                  <option>Daily subscription</option>
-                  <option>Weekly subscription</option>
-                  <option>Monthly subscription</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Preferred Delivery Time</label>
-                <select id="time">
-                  <option>Morning 6 AM - 8 AM</option>
-                  <option>Morning 8 AM - 10 AM</option>
-                  <option>Evening 5 PM - 7 PM</option>
-                </select>
-              </div>
-              <div class="field full">
-                <label>Delivery Address</label>
-                <textarea id="address" placeholder="House no, street, area, city" required></textarea>
+
+              <div className="mt-10 grid gap-6 md:grid-cols-3">
+                {filteredProducts.map((product) => (
+                  <motion.div key={product.id} layout>
+                    <Card className="group overflow-hidden rounded-[2rem] border-emerald-100 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                      <div className="relative h-64 overflow-hidden">
+                        <img src={product.image} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                        <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-xs font-black text-emerald-800 shadow">{product.tag}</span>
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h3 className="text-xl font-black">{product.name}</h3>
+                            <p className="mt-1 text-sm font-semibold text-slate-500">{product.unit}</p>
+                          </div>
+                          <p className="text-xl font-black text-emerald-800">{formatINR(product.price)}</p>
+                        </div>
+                        <p className="mt-4 min-h-[48px] text-sm leading-6 text-slate-600">{product.description}</p>
+                        <Button onClick={() => addToCart(product.id)} className="mt-5 w-full rounded-full bg-slate-950 hover:bg-emerald-800"><Plus className="mr-2 h-4 w-4" /> Add to Cart</Button>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
               </div>
             </div>
-            <button class="btn btn-primary" type="submit">💬 Send Order on WhatsApp</button>
-<br><br>
+          </section>
 
-<div>
-  <p><strong>Pay Online:</strong></p>
-  <<dependency>
- <groupId>com.razorpay</groupId>
- <artifactId>razorpay-java</artifactId>
- <version>1.4.8</version>
-</dependency>>
-</implementation "com.razorpay:razorpay-java:1.4.7">
-< Initialize client>>
-<RazorpayClient instance = new RazorpayClient("key_id", "key_secret");>
-  <Map<String, String> headers = new HashMap<String, String>();
-<razorpayClient.addHeaders(headers);>
-  < Initialize client>
-<RazorpayClient instance = new RazorpayClient("access_token");>
-  <Map<String, String> headers = new HashMap<String, String>();
-<razorpayClient.addHeaders(headers);>
-</div>
-          </form>
+          <section id="plans" className="bg-emerald-950 py-16 text-white">
+            <div className="mx-auto max-w-7xl px-4 md:px-8">
+              <div className="text-center">
+                <p className="font-bold uppercase tracking-[0.2em] text-emerald-300">Monthly Plans</p>
+                <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Subscribe and never miss fresh milk</h2>
+              </div>
+              <div className="mt-10 grid gap-6 md:grid-cols-3">
+                {plans.map((plan) => (
+                  <Card key={plan.name} className={`relative rounded-[2rem] border-white/10 bg-white/10 text-white backdrop-blur ${plan.popular ? "ring-4 ring-amber-300" : ""}`}>
+                    {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-amber-300 px-4 py-2 text-xs font-black text-slate-950">Most Popular</div>}
+                    <CardContent className="p-8">
+                      <Crown className="mb-5 h-8 w-8 text-amber-300" />
+                      <h3 className="text-2xl font-black">{plan.name}</h3>
+                      <p className="mt-2 text-emerald-100">{plan.note}</p>
+                      <p className="mt-6 text-4xl font-black">{plan.price}</p>
+                      <div className="mt-7 grid gap-3">
+                        {plan.features.map((feature) => <div key={feature} className="flex items-center gap-3 text-sm font-semibold text-emerald-50"><CheckCircle2 className="h-5 w-5 text-emerald-300" /> {feature}</div>)}
+                      </div>
+                      <Button className="mt-8 w-full rounded-full bg-white text-emerald-950 hover:bg-amber-100" onClick={() => setActiveTab("checkout")}>Start Plan</Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
 
-          <div class="summary">
-            <h3>Order Summary</h3>
-            <div class="summary-row"><span>Product</span><strong id="sProduct">Milk</strong></div>
-            <div class="summary-row"><span>Quantity</span><strong id="sQty">1</strong></div>
-            <div class="summary-row"><span>Estimated Total</span><strong id="sTotal">₹60</strong></div>
-            <p class="note">Final price may vary based on delivery location, subscription plan and availability. Please replace the WhatsApp number in code with your actual business number.</p>
-            <br>
-            <a class="btn btn-outline" href="tel:+917077392544">📞 Need Help? Call Now</a>
+          <section id="about" className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:grid-cols-2 md:px-8">
+            <img src="https://images.unsplash.com/photo-1594761077961-2a24cdb60938?q=80&w=1400&auto=format&fit=crop" alt="Dairy farm" className="h-[480px] w-full rounded-[2.5rem] object-cover shadow-xl" />
+            <div className="flex flex-col justify-center">
+              <SectionTitle eyebrow="Our Story" title="Built on purity, care and trust." subtitle="Kousalya Dairy is focused on delivering fresh and hygienic dairy products with transparent sourcing, careful handling, and customer-first service." />
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                {[[Users, "Trusted by Families"], [Milk, "Fresh Dairy Range"], [ShieldCheck, "Hygienic Process"], [Truck, "Local Delivery"]].map(([Icon, text]) => (
+                  <div key={text} className="flex items-center gap-3 rounded-2xl bg-emerald-50 p-4 font-bold text-emerald-900"><Icon className="h-5 w-5" /> {text}</div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-amber-50 py-16">
+            <div className="mx-auto max-w-7xl px-4 md:px-8">
+              <SectionTitle eyebrow="Customer Reviews" title="What customers say" center />
+              <div className="mt-10 grid gap-6 md:grid-cols-3">
+                {testimonials.map((review) => (
+                  <Card key={review.name} className="rounded-[2rem] border-amber-100 bg-white shadow-sm">
+                    <CardContent className="p-7">
+                      <div className="flex gap-1 text-amber-500">{Array.from({ length: review.rating }).map((_, index) => <Star key={index} className="h-5 w-5 fill-current" />)}</div>
+                      <p className="mt-5 text-lg font-semibold leading-7 text-slate-700">“{review.text}”</p>
+                      <p className="mt-5 font-black text-emerald-900">{review.name}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {activeTab === "auth" && (
+        <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 md:grid-cols-2 md:px-8">
+          <div className="flex flex-col justify-center">
+            <SectionTitle eyebrow="Customer Account" title="Login, signup and OTP verification" subtitle="Customers can create an account, verify mobile number using OTP and access orders, invoices and delivery tracking." />
+            <div className="mt-8 grid gap-4">
+              {[
+                [Smartphone, "Mobile number based login"],
+                [Shield, "OTP verification ready"],
+                [Database, "Customer profile storage"],
+                [BellRing, "Delivery notifications ready"]
+              ].map(([Icon, text]) => <div key={text} className="flex items-center gap-3 rounded-2xl bg-emerald-50 p-4 font-bold text-emerald-900"><Icon className="h-5 w-5" /> {text}</div>)}
+            </div>
           </div>
+
+          <Card className="rounded-[2rem] border-emerald-100 shadow-xl">
+            <CardContent className="p-8">
+              <div className="mb-6 flex rounded-full bg-slate-100 p-1">
+                <button onClick={() => setAuthMode("login")} className={`flex-1 rounded-full px-4 py-3 font-black ${authMode === "login" ? "bg-white shadow" : ""}`}>Login</button>
+                <button onClick={() => setAuthMode("signup")} className={`flex-1 rounded-full px-4 py-3 font-black ${authMode === "signup" ? "bg-white shadow" : ""}`}>Signup</button>
+              </div>
+              <h3 className="text-2xl font-black">{authMode === "login" ? "Welcome back" : "Create account"}</h3>
+              <div className="mt-6 grid gap-4">
+                {authMode === "signup" && <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Full Name" />}
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} className="rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Mobile Number" />
+                <input value={address} onChange={(e) => setAddress(e.target.value)} className="rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Delivery Address" />
+                {!otpSent ? (
+                  <Button onClick={() => setOtpSent(true)} className="rounded-full bg-emerald-700 py-6 hover:bg-emerald-800"><LockKeyhole className="mr-2 h-5 w-5" /> Send OTP</Button>
+                ) : (
+                  <>
+                    <input className="rounded-2xl border p-4 tracking-[0.4em] outline-none focus:border-emerald-600" placeholder="Enter OTP" maxLength={6} />
+                    <Button onClick={() => { setIsLoggedIn(true); setOtpSent(false); setActiveTab("checkout"); }} className="rounded-full bg-emerald-700 py-6 hover:bg-emerald-800"><LogIn className="mr-2 h-5 w-5" /> Verify & Continue</Button>
+                  </>
+                )}
+              </div>
+              {isLoggedIn && <div className="mt-5 rounded-2xl bg-emerald-50 p-4 text-sm font-bold text-emerald-800"><BadgeCheck className="mr-2 inline h-5 w-5" /> Logged in as {customerName}</div>}
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {activeTab === "checkout" && (
+        <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 md:grid-cols-[1fr_0.8fr] md:px-8">
+          <div>
+            <SectionTitle eyebrow="Secure Checkout" title="Cart, live payment and order storage" subtitle="This checkout is Razorpay-ready. In production, your backend will create payment orders, verify payment signature and store orders in MongoDB/Firebase." />
+            <Card className="mt-8 rounded-[2rem] border-emerald-100 shadow-sm">
+              <CardContent className="p-6">
+                <h3 className="mb-5 text-2xl font-black">Customer & Payment Details</h3>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Customer Name" />
+                  <input value={phone} onChange={(e) => setPhone(e.target.value)} className="rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Phone Number" />
+                  <input value={address} onChange={(e) => setAddress(e.target.value)} className="rounded-2xl border p-4 outline-none focus:border-emerald-600 md:col-span-2" placeholder="Delivery Address" />
+                  <select value={paymentMode} onChange={(e) => setPaymentMode(e.target.value)} className="rounded-2xl border p-4 outline-none focus:border-emerald-600 md:col-span-2">
+                    <option>Razorpay</option>
+                    <option>UPI</option>
+                    <option>Card / Net Banking</option>
+                    <option>COD</option>
+                  </select>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6 rounded-[2rem] border-emerald-100 bg-slate-950 text-white shadow-sm">
+              <CardContent className="p-6">
+                <h3 className="flex items-center gap-2 text-xl font-black"><Database className="text-emerald-300" /> Backend API Structure</h3>
+                <pre className="mt-4 overflow-auto rounded-2xl bg-black/40 p-4 text-xs leading-6 text-emerald-100">{`POST /api/auth/send-otp
+POST /api/auth/verify-otp
+POST /api/payment/create-razorpay-order
+POST /api/payment/verify-signature
+POST /api/orders/create
+GET  /api/orders/:orderId
+GET  /api/admin/orders
+PATCH /api/admin/orders/:id/status
+GET  /api/invoices/:orderId`}</pre>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="rounded-[2rem] border-emerald-100 shadow-xl">
+            <CardContent className="p-6">
+              <h3 className="text-2xl font-black">Order Summary</h3>
+              {cartItems.length === 0 ? (
+                <div className="mt-6 rounded-3xl bg-slate-50 p-8 text-center">
+                  <ShoppingCart className="mx-auto h-12 w-12 text-slate-400" />
+                  <p className="mt-4 font-bold text-slate-600">Your cart is empty</p>
+                  <Button className="mt-5 rounded-full bg-emerald-700" onClick={() => setActiveTab("website")}>Add Products</Button>
+                </div>
+              ) : (
+                <div className="mt-6 space-y-4">
+                  {cartItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-4 rounded-3xl bg-slate-50 p-4">
+                      <img src={item.image} alt={item.name} className="h-16 w-16 rounded-2xl object-cover" />
+                      <div className="flex-1">
+                        <h4 className="font-black">{item.name}</h4>
+                        <p className="text-sm font-semibold text-slate-500">{formatINR(item.price)} / {item.unit}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => decrease(item.id)} className="rounded-full bg-white p-2 shadow"><Minus className="h-4 w-4" /></button>
+                        <span className="w-6 text-center font-black">{item.qty}</span>
+                        <button onClick={() => addToCart(item.id)} className="rounded-full bg-white p-2 shadow"><Plus className="h-4 w-4" /></button>
+                        <button onClick={() => removeItem(item.id)} className="rounded-full bg-red-50 p-2 text-red-600"><Trash2 className="h-4 w-4" /></button>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="rounded-3xl bg-emerald-50 p-5">
+                    <div className="flex justify-between py-1 text-sm font-semibold"><span>Subtotal</span><span>{formatINR(subtotal)}</span></div>
+                    <div className="flex justify-between py-1 text-sm font-semibold"><span>Delivery</span><span>{delivery === 0 ? "Free" : formatINR(delivery)}</span></div>
+                    <div className="flex justify-between py-1 text-sm font-semibold"><span>GST 5%</span><span>{formatINR(gst)}</span></div>
+                    <div className="mt-3 flex justify-between border-t border-emerald-200 pt-4 text-xl font-black"><span>Total</span><span>{formatINR(total)}</span></div>
+                  </div>
+                  <Button onClick={simulateRazorpayPayment} className="w-full rounded-full bg-emerald-700 py-6 text-base hover:bg-emerald-800"><WalletCards className="mr-2 h-5 w-5" /> Pay & Store Order</Button>
+                  <Button variant="outline" className="w-full rounded-full border-green-300 py-6 text-base text-green-700" asChild>
+                    <a href={`https://wa.me/917077392544?text=${orderMessage}`} target="_blank" rel="noreferrer"><MessageCircle className="mr-2 h-5 w-5" /> WhatsApp Order</a>
+                  </Button>
+                </div>
+              )}
+              <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-700">Payment Status: <span className="text-emerald-700">{paymentStatus}</span></div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {activeTab === "tracking" && (
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
+          <SectionTitle eyebrow="Order Tracking" title="Track live order status" subtitle="Customers can track payment confirmation, packing, rider assignment and final delivery status." />
+          <div className="mt-8 grid gap-8 md:grid-cols-[0.8fr_1.2fr]">
+            <Card className="rounded-[2rem] border-emerald-100 shadow-sm">
+              <CardContent className="p-6">
+                <h3 className="text-2xl font-black">Search Order</h3>
+                <input value={trackingId} onChange={(e) => setTrackingId(e.target.value)} className="mt-5 w-full rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Enter Order ID e.g. KD-1001" />
+                <Button className="mt-4 w-full rounded-full bg-emerald-700 py-6 hover:bg-emerald-800"><SearchCheck className="mr-2 h-5 w-5" /> Track Order</Button>
+                <div className="mt-5 rounded-3xl bg-slate-50 p-5">
+                  <p className="text-sm font-bold text-slate-500">Order ID</p>
+                  <p className="text-2xl font-black text-emerald-900">{trackedOrder.id}</p>
+                  <p className="mt-3 text-sm font-bold text-slate-500">ETA</p>
+                  <p className="font-black">{trackedOrder.eta}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-[2rem] border-emerald-100 shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                  <div>
+                    <h3 className="text-2xl font-black">{trackedOrder.customer}</h3>
+                    <p className="mt-1 text-sm font-semibold text-slate-500">{trackedOrder.address}</p>
+                  </div>
+                  <StatusPill value={trackedOrder.status} />
+                </div>
+                <div className="mt-8 grid gap-5">
+                  {deliveryStages.map((stage, index) => {
+                    const activeIndex = Math.max(deliveryStages.indexOf(trackedOrder.status), trackedOrder.status === "Payment Confirmed" ? 1 : 0);
+                    const isDone = index <= activeIndex || trackedOrder.status === "Delivered";
+                    return (
+                      <div key={stage} className="flex items-center gap-4">
+                        <div className={`flex h-11 w-11 items-center justify-center rounded-full ${isDone ? "bg-emerald-700 text-white" : "bg-slate-100 text-slate-400"}`}>{isDone ? <CheckCircle2 /> : index + 1}</div>
+                        <div>
+                          <p className="font-black">{stage}</p>
+                          <p className="text-sm text-slate-500">{isDone ? "Completed / active" : "Waiting"}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      )}
+
+      {activeTab === "invoice" && (
+        <section className="mx-auto max-w-5xl px-4 py-16 md:px-8">
+          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <SectionTitle eyebrow="Invoice" title="Real invoice generation" subtitle="Production backend can generate PDF invoices automatically after payment verification." />
+            <Button onClick={() => window.print()} className="rounded-full bg-emerald-700 px-8 py-6 hover:bg-emerald-800"><FileText className="mr-2 h-5 w-5" /> Print Invoice</Button>
+          </div>
+
+          <Card className="rounded-[2rem] border-emerald-100 bg-white shadow-xl print:shadow-none">
+            <CardContent className="p-8">
+              <div className="flex flex-col justify-between gap-6 border-b pb-8 md:flex-row">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-700 text-white"><Milk /></div>
+                    <div>
+                      <h3 className="text-2xl font-black text-emerald-900">Kousalya Dairy</h3>
+                      <p className="text-sm font-semibold text-slate-500">Freshness from our farm</p>
+                    </div>
+                  </div>
+                  <p className="mt-5 text-sm leading-6 text-slate-600">Farm Location, India<br />Phone: +91 70773 92544<br />GSTIN: Add your GST number</p>
+                </div>
+                <div className="text-left md:text-right">
+                  <p className="text-sm font-bold uppercase text-slate-500">Tax Invoice</p>
+                  <p className="mt-2 text-3xl font-black">INV-{trackedOrder.id}</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">Date: {trackedOrder.date}</p>
+                  <p className="text-sm font-semibold text-slate-500">Payment ID: {trackedOrder.paymentId}</p>
+                </div>
+              </div>
+
+              <div className="grid gap-6 border-b py-8 md:grid-cols-2">
+                <div>
+                  <p className="text-sm font-bold uppercase text-slate-500">Bill To</p>
+                  <p className="mt-2 text-xl font-black">{trackedOrder.customer}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-600">{trackedOrder.phone}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-600">{trackedOrder.address}</p>
+                </div>
+                <div className="md:text-right">
+                  <p className="text-sm font-bold uppercase text-slate-500">Order Status</p>
+                  <div className="mt-2"><StatusPill value={trackedOrder.payment} /></div>
+                  <p className="mt-3 text-sm font-semibold text-slate-600">Delivery: {trackedOrder.status}</p>
+                </div>
+              </div>
+
+              <div className="py-8">
+                <div className="rounded-3xl border overflow-hidden">
+                  <div className="grid grid-cols-4 bg-slate-950 p-4 text-sm font-black text-white">
+                    <span className="col-span-2">Items</span>
+                    <span>Amount</span>
+                    <span className="text-right">Total</span>
+                  </div>
+                  <div className="grid grid-cols-4 p-4 text-sm font-bold">
+                    <span className="col-span-2">{trackedOrder.items}</span>
+                    <span>{formatINR(trackedOrder.amount)}</span>
+                    <span className="text-right">{formatINR(trackedOrder.amount)}</span>
+                  </div>
+                </div>
+                <div className="ml-auto mt-6 max-w-sm rounded-3xl bg-emerald-50 p-5">
+                  <div className="flex justify-between text-sm font-semibold"><span>Subtotal</span><span>{formatINR(trackedOrder.amount)}</span></div>
+                  <div className="mt-2 flex justify-between text-sm font-semibold"><span>Tax</span><span>Included / as applicable</span></div>
+                  <div className="mt-4 flex justify-between border-t border-emerald-200 pt-4 text-xl font-black"><span>Total Paid</span><span>{formatINR(trackedOrder.amount)}</span></div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {activeTab === "admin" && (
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <SectionTitle eyebrow="Admin Dashboard" title="Manage orders, delivery and payments" subtitle="Owner/admin can view all orders, assign delivery rider, update delivery stage and monitor revenue." />
+            <Button variant="outline" className="rounded-full border-red-200 text-red-600"><LogOut className="mr-2 h-4 w-4" /> Admin Logout</Button>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-4">
+            {[
+              [IndianRupee, formatINR(orders.reduce((s, o) => s + o.amount, 0)), "Total Revenue"],
+              [ClipboardList, orders.length, "Total Orders"],
+              [Truck, orders.filter((o) => o.status !== "Delivered").length, "Active Deliveries"],
+              [CreditCard, orders.filter((o) => o.payment === "Paid").length, "Paid Orders"]
+            ].map(([Icon, value, label]) => (
+              <Card key={label} className="rounded-3xl border-emerald-100 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-slate-500">{label}</p>
+                      <p className="mt-2 text-3xl font-black text-emerald-900">{value}</p>
+                    </div>
+                    <div className="rounded-2xl bg-emerald-100 p-3 text-emerald-800"><Icon /></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+            <Card className="rounded-[2rem] border-emerald-100 shadow-xl">
+              <CardContent className="p-6">
+                <h3 className="text-2xl font-black">Recent Orders</h3>
+                <div className="mt-6 overflow-x-auto">
+                  <table className="w-full min-w-[760px] text-left text-sm">
+                    <thead>
+                      <tr className="border-b text-slate-500">
+                        <th className="py-3">Order</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Rider</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.map((order) => (
+                        <tr key={order.id} className="border-b last:border-0">
+                          <td className="py-4 font-black text-emerald-900">{order.id}</td>
+                          <td><p className="font-bold">{order.customer}</p><p className="text-xs text-slate-500">{order.phone}</p></td>
+                          <td className="font-black">{formatINR(order.amount)}</td>
+                          <td><StatusPill value={order.payment} /></td>
+                          <td><StatusPill value={order.status} /></td>
+                          <td className="font-bold">{order.rider}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-[2rem] border-emerald-100 shadow-xl">
+              <CardContent className="p-6">
+                <h3 className="flex items-center gap-2 text-2xl font-black"><Bike className="text-emerald-700" /> Delivery Management</h3>
+                <div className="mt-6 grid gap-4">
+                  <select className="rounded-2xl border p-4 outline-none focus:border-emerald-600">
+                    {orders.map((order) => <option key={order.id}>{order.id} - {order.customer}</option>)}
+                  </select>
+                  <select className="rounded-2xl border p-4 outline-none focus:border-emerald-600">
+                    <option>Assign Rider</option>
+                    <option>Mahesh</option>
+                    <option>Suresh</option>
+                    <option>Ravi</option>
+                  </select>
+                  <select className="rounded-2xl border p-4 outline-none focus:border-emerald-600">
+                    {deliveryStages.map((stage) => <option key={stage}>{stage}</option>)}
+                  </select>
+                  <Button className="rounded-full bg-emerald-700 py-6 hover:bg-emerald-800"><Route className="mr-2 h-5 w-5" /> Update Delivery Status</Button>
+                </div>
+                <div className="mt-6 rounded-3xl bg-slate-50 p-5">
+                  <p className="font-black">Delivery Features Added</p>
+                  <ul className="mt-3 grid gap-2 text-sm font-semibold text-slate-600">
+                    <li>• Rider assignment UI</li>
+                    <li>• Delivery status update UI</li>
+                    <li>• Customer tracking screen</li>
+                    <li>• Admin order table</li>
+                    <li>• Backend API-ready structure</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mt-8 rounded-[2rem] border-emerald-100 bg-slate-950 text-white shadow-xl">
+            <CardContent className="p-6">
+              <h3 className="flex items-center gap-2 text-2xl font-black"><Database className="text-emerald-300" /> MongoDB / Firebase Order Schema</h3>
+              <pre className="mt-5 overflow-auto rounded-2xl bg-black/40 p-5 text-xs leading-6 text-emerald-100">{`// orders collection / MongoDB model
+{
+  orderId: "KD-1001",
+  customerId: "customer_uid",
+  customerName: "Ramesh Kumar",
+  phone: "+91...",
+  address: "Delivery address",
+  items: [{ productId, name, price, quantity }],
+  subtotal: 650,
+  deliveryCharge: 0,
+  gst: 33,
+  total: 683,
+  paymentMode: "Razorpay",
+  paymentStatus: "Paid",
+  razorpayOrderId: "order_xxx",
+  razorpayPaymentId: "pay_xxx",
+  deliveryStatus: "Payment Confirmed",
+  assignedRider: "Mahesh",
+  invoiceNumber: "INV-KD-1001",
+  createdAt: new Date(),
+  updatedAt: new Date()
+}`}</pre>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      <section className="bg-slate-950 py-16 text-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-2 md:px-8">
+          <div>
+            <p className="font-bold uppercase tracking-[0.2em] text-emerald-300">Contact Us</p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Start your fresh dairy journey today.</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-300">For daily milk delivery, bulk orders, events, shops, hotels or subscription plans, connect with Kousalya Dairy.</p>
+            <div className="mt-8 grid gap-4">
+              <div className="flex items-center gap-4 rounded-3xl bg-white/10 p-5"><Phone className="text-emerald-300" /> <span className="font-bold">+91 70773 92544</span></div>
+              <div className="flex items-center gap-4 rounded-3xl bg-white/10 p-5"><MapPin className="text-emerald-300" /> <span className="font-bold">Your Farm Location, India</span></div>
+              <div className="flex items-center gap-4 rounded-3xl bg-white/10 p-5"><MessageCircle className="text-emerald-300" /> <span className="font-bold">WhatsApp orders accepted</span></div>
+            </div>
+          </div>
+          <Card className="rounded-[2rem] bg-white text-slate-950">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-black">Quick Enquiry</h3>
+              <div className="mt-6 grid gap-4">
+                <input className="rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Your Name" />
+                <input className="rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Mobile Number" />
+                <select className="rounded-2xl border p-4 outline-none focus:border-emerald-600">
+                  <option>Daily Milk Subscription</option>
+                  <option>Product Order</option>
+                  <option>Bulk Order</option>
+                  <option>Business Partnership</option>
+                </select>
+                <textarea className="min-h-[130px] rounded-2xl border p-4 outline-none focus:border-emerald-600" placeholder="Message" />
+                <Button className="rounded-full bg-emerald-700 py-6 hover:bg-emerald-800" asChild><a href="https://wa.me/917077392544" target="_blank" rel="noreferrer">Submit on WhatsApp</a></Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="gallery">
-      <div class="container">
-        <div class="section-title">
-          <small>Gallery</small>
-          <h2>From Our Farm</h2>
-          <p>A glimpse of freshness, care and purity.</p>
-        </div>
-        <div class="gallery-grid">
-          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1596733430284-f7437764b1a9?auto=format&fit=crop&w=900&q=80')"></div>
-          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80')"></div>
-          <div class="gallery-item" style="background-image:url('https://images.unsplash.com/photo-1600788907416-456578634209?auto=format&fit=crop&w=900&q=80')"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="contact-section" id="contact">
-      <div class="container">
-        <div class="section-title">
-          <small style="color:#9ee6a7">Contact Us</small>
-          <h2 style="color:white">Start Fresh Dairy Delivery Today</h2>
-          <p style="color:#dcebdd">Call or WhatsApp us for daily milk delivery and subscriptions.</p>
-        </div>
-        <div class="contact-grid">
-          <div class="contact-card"><h3>📞 Phone</h3><p>+91 7077392544<br> </p></div>
-          <div class="contact-card"><h3>📍 Address</h3><p>Gopinath Road,Near Makhanpur Chowk, Baleswar,<br>Your Odisha - 756047</p></div>
-          <div class="contact-card"><h3>💬 WhatsApp</h3><p>Order milk, curd, ghee and paneer directly on WhatsApp.</p><a class="btn btn-outline" href="https://wa.me/911234567890" target="_blank">Order on WhatsApp</a></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container">© 2026 Kousalya Dairy. All Rights Reserved. ତାଜା ଓ ବିଶୁଦ୍ଧ, ସିଧା ଆପଣଙ୍କ ଘରକୁ/Fresh & Pure, direct To Your Home 💚</div>
-  </footer>
-
-  <script>
-    const businessWhatsAppNumber = "917077392544"; //
-
-    function calculateTotal() {
-      const product = document.getElementById('product');
-      const selected = product.options[product.selectedIndex];
-      const price = Number(selected.dataset.price);
-      const qty = Number(document.getElementById('qty').value || 1);
-      const total = price * qty;
-
-      document.getElementById('sProduct').innerText = selected.value;
-      document.getElementById('sQty').innerText = qty;
-      document.getElementById('sTotal').innerText = '₹' + total;
-    }
-
-    function sendOrder(event) {
-      event.preventDefault();
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const product = document.getElementById('product');
-      const selected = product.options[product.selectedIndex];
-      const productName = selected.value;
-      const price = Number(selected.dataset.price);
-      const qty = Number(document.getElementById('qty').value || 1);
-      const total = price * qty;
-      const delivery = document.getElementById('delivery').value;
-      const time = document.getElementById('time').value;
-      const address = document.getElementById('address').value;
-
-      const message = `Hi Kousalya Dairy,%0A%0AI want to place an order:%0A%0AName: ${name}%0AMobile: ${phone}%0AProduct: ${productName}%0AQuantity: ${qty}%0ADelivery Type: ${delivery}%0APreferred Time: ${time}%0AAddress: ${address}%0AEstimated Total: ₹${total}%0A%0APlease confirm availability and delivery.`;
-
-      window.open(`https://wa.me/${7077392544}?text=${message}`, '_blank');
-    }
-
-    calculateTotal();
-  </script>
-</body>
-</html>
+      <footer className="bg-slate-950 border-t border-white/10 px-4 py-8 text-center text-sm font-semibold text-slate-400">
+        © {new Date().getFullYear()} Kousalya Dairy. Full-stack-ready dairy commerce website.
+      </footer>
+    </div>
+  );
+}
